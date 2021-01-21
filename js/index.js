@@ -1,105 +1,147 @@
-var canvas = document.getElementById("canvas");
-let height = 600;
-let width = 500;
-canvas.width = width;
-canvas.height = height;
-const ctx = canvas.getContext('2d');
+  var start = document.getElementById('start');
+  var startBtn = document.getElementById('start-btn');
 
-var base = document.getElementById('base');
-var backgroundImage = document.getElementById('bg');
-var uPipe = document.getElementById('u-pipe');
-var dPipe = document.getElementById('d-pipe');
-var birdImg = document.getElementById('bird');
-var scoreBoard =  document.getElementsByClassName('score')[0];
-const gap = 120;
-const baseHeight = 100;
-let distance = 0;
-const pipeWidth = 40;
-var bird = {
-    x:150,
-    y:200
-}
-var lx =350
+  startBtn.onclick= function(){
+  start.style.display ="none";
 
-var obstacle = []
-obstacle.push({
-    x:lx,
-    height:150
-})
+  var canvas = document.getElementById("canvas");
+  canvas.style.opacity = 1;
+  let height = 600;
+  let width = 500;
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  var base = document.getElementById('base');
+  var backgroundImage = document.getElementById('bg');
+  var uPipe = document.getElementById('u-pipe');
+  var dPipe = document.getElementById('d-pipe');
+  var birdImg = document.getElementById('bird');
+  var scoreBoard =  document.getElementById('score');
+  var end = document.getElementById('end');
+  var hs = document.getElementById('hs');
+  var replay = document.getElementById('replay');
+  replay.addEventListener('click',function(){
+    document.location.reload();
+  })
+  end.style.display = "none";
+  var highscore = parseInt(localStorage.getItem("HS"));
+  if(!highscore){
+    highscore = 0
+  }
 
-let k ;
-let acc = 0;
-let initialSpeed = 2;
-let score = 0;
+  const gap = 120;
+  const baseHeight = 100;
 
-setInterval(generate,500)
+  const pipeWidth = 40;
+  var bird = {
+      x:150,
+      y:200,
+      w:30,
+      h:20
+  }
+  var lx =350
+
+  var obstacle = []
+  obstacle.push({
+      x:lx,
+      height:150
+  })
+
+  let acc = 0;
+  let initialSpeed = 2;
+  let score = 0;
+  var isGameOver =false;
+
+  var obsGenerate = setInterval(generate,500);
 
 
 
-let G=0
+  let G=0
 
 
-requestAnimationFrame(update);
+  requestAnimationFrame(update);
 
-function update(){
-    
-    ctx.drawImage(backgroundImage,0,0,canvas.width,canvas.height);
-    ctx.drawImage(birdImg , bird.x , bird.y);
-    k = 0;
-    bird.y = bird.y + G
-    G = G + 0.2;
-    
-    
+  function update(){
 
-    
-    
-    for (var i = 0 ; i<obstacle.length ; i++){
-    ctx.drawImage(uPipe,obstacle[i].x,0,pipeWidth, obstacle[i].height);
-    ctx.drawImage(dPipe,obstacle[i].x,obstacle[i].height+gap,pipeWidth,canvas.height-(obstacle[i].height+gap+baseHeight));
-    obstacle[i].x  = obstacle[i].x - initialSpeed +-1* acc;
-    if(obstacle[i].x < bird.x){
-        obstacle.splice(i,1);
-        score = score + 1;
-        scoreBoard.innerHTML = score;
+      ctx.drawImage(backgroundImage,0,0,canvas.width,canvas.height);
+      ctx.drawImage(birdImg , bird.x , bird.y , bird.w ,bird.h);
+      bird.y = bird.y + G
+      G = G + 0.25;
 
+
+
+
+
+      for (var i = 0 ; i<obstacle.length ; i++){
+        ctx.drawImage(uPipe,obstacle[i].x,0,pipeWidth, obstacle[i].height);
+        ctx.drawImage(dPipe,obstacle[i].x,obstacle[i].height+gap,pipeWidth,canvas.height-(obstacle[i].height+gap+baseHeight));
+        obstacle[i].x  = obstacle[i].x - initialSpeed +-1* acc;
+        checkCollision(bird.x , bird.y, obstacle[i].x ,0 , bird.w,bird.h , pipeWidth,obstacle[i].height);
+        checkCollision(bird.x , bird.y, obstacle[i].x ,obstacle[i].height+gap, bird.w,bird.h , pipeWidth,canvas.height-(obstacle[i].height+gap+baseHeight))
+        if(obstacle[i].x < -pipeWidth){
+            obstacle.splice(i,1);
+            score = score + 1;
+
+            scoreBoard.innerHTML = score;
+
+      }
+
+      }
+
+      ctx.drawImage(base,0,canvas.height-baseHeight, canvas.width,baseHeight);
+      acc=acc+0.001;
+      if(!isGameOver){
+      requestAnimationFrame(update);
     }
-    distance = Math.abs(distance+initialSpeed+acc);
-   
-   
-    
+  }
 
-    
+  function generate(){
+
+      x1 = lx + randomizer().change;
+      lx = x1;
+      obstacle.push({
+          x:x1,
+          height:randomizer().height
+      })
+
+  }
+
+  function randomizer(){
+      let oGap = Math.ceil(Math.random()*50)+250;
+      let h = Math.floor(Math.random()*(canvas.height - gap - baseHeight -20))+10;
+      return{
+          change:oGap,
+          height:h
+      }
+  }
+  document.addEventListener('click',function(e){
+      G = 0;
+      bird.y = bird.y - 50;
+  })
+  function checkCollision(x1,y1,x2,y2,w1,h1,w2,h2){
+      if (x1+ w1 >= x2 && x1 <= x2 + w2 && y1 + h1 >= y2 && y1 <= y2 + h2) {
+          isGameOver = true;
+
+  }
+  if(y1 + h1 > canvas.height - baseHeight + 8){
+    isGameOver = true;
+
+  }
+  if(isGameOver){
+    if(score > highscore){
+        highscore = score;
+        localStorage.setItem('HS',highscore); /*adding the highscore in local storage */
     }
+    gameOver();
+  }
+  }
 
-    ctx.drawImage(base,0,canvas.height-baseHeight, canvas.width,baseHeight);
-    acc=acc+0.001;
-    requestAnimationFrame(update);
-    
+  function gameOver(){
+    canvas.style.opacity = "0.5";
+    end.style.display = "block"
+
+    hs.innerHTML = "Highscore " + highscore;
+    clearInterval(obsGenerate);
+    obstacle = [];
+  }
 }
-
-function generate(){
-
-    x1 = lx + randomizer().change;
-    lx = x1;
-    obstacle.push({
-        x:x1,
-        height:randomizer().height
-    })
-
-}
-
-function randomizer(){
-    let oGap = Math.ceil(Math.random()*50)+250;
-    let h = Math.floor(Math.random()*(canvas.height - gap - baseHeight -20))+10;
-    return{
-        change:oGap,
-        height:h
-    }
-}
-document.addEventListener('click',function(e){
-    G = 0;
-    bird.y = bird.y - 40;
-})
-
-
-

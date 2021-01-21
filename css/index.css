@@ -3,9 +3,80 @@
     padding:0;
 }
 
-#canvas{
-    margin-left: 30%;
-}
+
  #base , #bg, #u-pipe , #d-pipe , #bird{
      display:none;
  }
+ .body {
+   position:relative;
+   margin-left:30%;
+
+
+
+ }
+ #score {
+   position: absolute;
+   margin-left:450px;
+   top:5%;
+   color:red;
+   font-size: 50px;
+   font-weight: bold;
+ }
+#end {
+  display: none;
+  height: 80px;
+  width:100px;
+  position: absolute;
+  margin-left:200px;
+  margin-top:200px;
+  background-color: white;
+  z-index: 1;
+  color:black;
+  font-weight: bold;
+  font-size: 32;
+
+  line-height: 25px;
+  background: inherit;
+}
+#start {
+  display: block;
+  width:180px;
+  position: absolute;
+  margin-left:137px;
+  margin-top:50px;
+  background-color: white;
+  z-index: 1;
+  color:black;
+  font-weight: bold;
+  font-size: 32;
+
+  line-height: 25px;
+  background: inherit;
+  text-align: center;
+
+}
+
+
+#end p , #end #replay{
+  text-align: center;
+}
+#end #replay{
+  margin-left: 20px;
+}
+#replay ,#start-btn{
+  padding:8px;
+  font-size: 32;
+  background-color: red;
+  cursor: pointer;
+  color:white;
+
+}
+#start span{
+  font-size: small;
+}
+
+
+
+#replay:hover , #start-btn:hover{
+  background-color: yellowgreen;
+}
