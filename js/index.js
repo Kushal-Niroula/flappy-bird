@@ -1,9 +1,11 @@
-  var start = document.getElementById('start');
-  var startBtn = document.getElementById('start-btn');
+/* initializing start screen */
+var start = document.getElementById('start');
+var startBtn = document.getElementById('start-btn');
 
-  startBtn.onclick= function(){
+/* main game play */
+startBtn.onclick= function(){
+/* loading dom elements */
   start.style.display ="none";
-
   var canvas = document.getElementById("canvas");
   canvas.style.opacity = 1;
   let height = 600;
@@ -20,13 +22,16 @@
   var end = document.getElementById('end');
   var hs = document.getElementById('hs');
   var replay = document.getElementById('replay');
+
   replay.addEventListener('click',function(){
     document.location.reload();
   })
   end.style.display = "none";
+
+  /* initializing in game parameters */
   var highscore = parseInt(localStorage.getItem("HS"));
   if(!highscore){
-    highscore = 0
+    highscore = 0;
   }
 
   const gap = 120;
@@ -39,7 +44,7 @@
       w:30,
       h:20
   }
-  var lx =350
+  var lx = 350;
 
   var obstacle = []
   obstacle.push({
@@ -50,15 +55,12 @@
   let acc = 0;
   let initialSpeed = 2;
   let score = 0;
-  var isGameOver =false;
+  var isGameOver = false;
 
   var obsGenerate = setInterval(generate,500);
+  var G=0
 
-
-
-  let G=0
-
-
+ /* start animation */
   requestAnimationFrame(update);
 
   function update(){
@@ -66,7 +68,7 @@
       ctx.drawImage(backgroundImage,0,0,canvas.width,canvas.height);
       ctx.drawImage(birdImg , bird.x , bird.y , bird.w ,bird.h);
       bird.y = bird.y + G
-      G = G + 0.25;
+      G = G + 0.25; /* accelerating G value by 0.25 */
 
 
 
@@ -89,12 +91,13 @@
       }
 
       ctx.drawImage(base,0,canvas.height-baseHeight, canvas.width,baseHeight);
-      acc=acc+0.001;
+      acc = acc + 0.001;
       if(!isGameOver){
       requestAnimationFrame(update);
     }
   }
 
+/* function to generate obstacle */
   function generate(){
 
       x1 = lx + randomizer().change;
@@ -106,6 +109,7 @@
 
   }
 
+/* function to randomize obstacle */
   function randomizer(){
       let oGap = Math.ceil(Math.random()*50)+250;
       let h = Math.floor(Math.random()*(canvas.height - gap - baseHeight -20))+10;
@@ -114,10 +118,14 @@
           height:h
       }
   }
+
+  /* jumping on click */
   document.addEventListener('click',function(e){
       G = 0;
       bird.y = bird.y - 50;
   })
+
+  /* function to checkcollision */
   function checkCollision(x1,y1,x2,y2,w1,h1,w2,h2){
       if (x1+ w1 >= x2 && x1 <= x2 + w2 && y1 + h1 >= y2 && y1 <= y2 + h2) {
           isGameOver = true;
@@ -136,6 +144,7 @@
   }
   }
 
+  /* game over handler */
   function gameOver(){
     canvas.style.opacity = "0.5";
     end.style.display = "block"
