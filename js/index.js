@@ -34,7 +34,7 @@ startBtn.onclick= function(){
     highscore = 0;
   }
 
-  const gap = 120;
+  const gap = 150;
   const baseHeight = 100;
 
   const pipeWidth = 40;
@@ -53,7 +53,7 @@ startBtn.onclick= function(){
   })
 
   let acc = 0;
-  let initialSpeed = 2;
+  let initialSpeed = 1;
   let score = 0;
   var isGameOver = false;
 
